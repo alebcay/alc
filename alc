@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-[ -f /Library/Caches/Alcatraz/packages.json ] || curl -s https://raw.githubusercontent.com/supermarin/alcatraz-packages/master/packages.json > /Library/Caches/Alcatraz/packages.json
 if [[ $1 = "install" ]]
 then
   if [[ $2 != "" ]]
   then
+    curl -s https://raw.githubusercontent.com/supermarin/alcatraz-packages/master/packages.json > /Library/Caches/Alcatraz/packages.json
     URL=$(jq -r ".packages.plugins | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
     if [[ $URL != "" ]]
     then
