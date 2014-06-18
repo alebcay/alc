@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+[ -f /Library/Caches/Alcatraz/packages.json ] || curl -s https://raw.githubusercontent.com/supermarin/alcatraz-packages/master/packages.json > /Library/Caches/Alcatraz/packages.json
+if [[ $1 = "install" ]]
+then
+  if [[ $2 != "" ]]
+  then
+    URL=$(jq -r ".packages.plugins | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
+    if [[ $URL != "" ]]
+    then
+      [ -d "/Library/Caches/Alcatraz/Sources/$2" ] || git clone $URL.git /Library/Caches/Alcatraz/Sources/$2
+      cd "/Library/Caches/Alcatraz/Sources/$2" ; git pull >/dev/null 2>&1 ; xcodebuild >/dev/null 2>&1
+      echo -e "\033[1;32mBuilt and installed plugin: $2\033[22;0m"
+      exit
+    fi
+    URL=$(jq -r ".packages.color_schemes | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
+    if [[ $URL != "" ]]
+    then
+      [ -d ~/Library/Developer/Xcode/UserData/FontAndColorThemes ] || mkdir ~/Library/Developer/Xcode/UserData/FontAndColorThemes
+      cd ~/Library/Developer/Xcode/UserData/FontAndColorThemes/; curl -Lso "$2.dvtcolortheme" $URL
+      echo -e "\033[1;32mInstalled color scheme: $2\033[22;0m"
+      exit
+    fi
+  fi
+fi
+
+if [[ $1 = "uninstall" ]]
+then
+  if [ -d "/Users/$(whoami)/Library/Application Support/Developer/Shared/Xcode/Plug-ins/$2.xcplugin" ]
+  then
+    (rm -r "/Users/$(whoami)/Library/Application Support/Developer/Shared/Xcode/Plug-ins/$2.xcplugin" >/dev/null 2>&1 && echo -e "\033[1;32m$2 plugin has been removed from your system.\033[22;0m") || echo -e "\033[1;31m$2 is not installed\033[22;0m"
+    exit
+  fi
+  if [ -e "/Users/$(whoami)/Library/Developer/Xcode/UserData/FontAndColorThemes/$2.dvtcolortheme" ]
+  then
+    ( rm "/Users/$(whoami)/Library/Developer/Xcode/UserData/FontAndColorThemes/$2.dvtcolortheme" >/dev/null 2>&1 && echo -e "\033[1;32m$2 color scheme has been removed from your system.\033[22;0m" ) || echo -e "\033[1;31m$2 is not installed\033[22;0m"
+    exit
+  fi
+fi
