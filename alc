@@ -20,7 +20,7 @@ then
     then
       echo -e "\033[1;34m==>\033[22;0m Downloading color scheme file for $2"
       [ -d ~/Library/Developer/Xcode/UserData/FontAndColorThemes ] || mkdir ~/Library/Developer/Xcode/UserData/FontAndColorThemes
-      cd ~/Library/Developer/Xcode/UserData/FontAndColorThemes/; curl -Lso "$2.dvtcolortheme" $URL
+      cd ~/Library/Developer/Xcode/UserData/FontAndColorThemes/; curl -L#so "$2.dvtcolortheme" $URL
       echo -e "\033[1;32mInstalled color scheme: $2\033[22;0m"
       exit
     fi
