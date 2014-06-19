@@ -3,6 +3,10 @@ alc
 
 CLI for the Alcatraz package manager
 
+### Prerequisites
+
+* `jq`, for parsing Alcatraz's `packages.json` file. You can get it easily from Homebrew with `brew install jq`
+
 ### Usage
 
 
