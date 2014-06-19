@@ -3,11 +3,14 @@ if [[ $1 = "install" ]]
 then
   if [[ $2 != "" ]]
   then
+    echo -e "\033[1;34m==>\033[22;0m Retrieving latest package information"
     curl -s https://raw.githubusercontent.com/supermarin/alcatraz-packages/master/packages.json > /Library/Caches/Alcatraz/packages.json
     URL=$(jq -r ".packages.plugins | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
     if [[ $URL != "" ]]
     then
+      echo -e "\033[1;34m==>\033[22;0m Downloading source repository for $2"
       [ -d "/Library/Caches/Alcatraz/Sources/$2" ] || git clone $URL.git /Library/Caches/Alcatraz/Sources/$2
+      echo -e "\033[1;34m==>\033[22;0m Building $2"
       cd "/Library/Caches/Alcatraz/Sources/$2" ; git pull >/dev/null 2>&1 ; xcodebuild >/dev/null 2>&1
       echo -e "\033[1;32mBuilt and installed plugin: $2\033[22;0m"
       exit
@@ -15,6 +18,7 @@ then
     URL=$(jq -r ".packages.color_schemes | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
     if [[ $URL != "" ]]
     then
+      echo -e "\033[1;34m==>\033[22;0m Downloading color scheme file for $2"
       [ -d ~/Library/Developer/Xcode/UserData/FontAndColorThemes ] || mkdir ~/Library/Developer/Xcode/UserData/FontAndColorThemes
       cd ~/Library/Developer/Xcode/UserData/FontAndColorThemes/; curl -Lso "$2.dvtcolortheme" $URL
       echo -e "\033[1;32mInstalled color scheme: $2\033[22;0m"
