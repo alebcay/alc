@@ -40,3 +40,7 @@ then
     exit
   fi
 fi
+
+echo -e "\033[1;34malc - the CLI tool for Alcatraz\033[22;0m"
+echo -e "by Caleb Xu\n"
+echo "Based on the package repository managed by Marin Usalj"\
