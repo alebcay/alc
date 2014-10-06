@@ -3,9 +3,16 @@ if [[ $1 = "install" ]]
 then
   if [[ $2 != "" ]]
   then
-    echo -e "\033[1;34m==>\033[22;0m Retrieving latest package information"
-    curl -# https://raw.githubusercontent.com/supermarin/alcatraz-packages/master/packages.json > /Library/Caches/Alcatraz/packages.json
-    URL=$(jq -r ".packages.plugins | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
+    echo -e "\033[1;34m==>\033[22;0m Checking internet connectivity"
+    wget -q --tries=10 --timeout=20 --spider http://github.com
+    if [[ $? -eq 0 ]]; then
+            echo -e "\033[1;34m==>\033[22;0m Retrieving latest package information"
+            curl -# https://raw.githubusercontent.com/supermarin/alcatraz-packages/master/packages.json > /Library/Caches/Alcatraz/packages.json
+            URL=$(jq -r ".packages.plugins | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
+    else
+            echo "\033[1;31m==>\033[22;0m Unable to retrieve latest package list."
+            exit
+    fi
     if [[ $URL != "" ]]
     then
       echo -e "\033[1;34m==>\033[22;0m Downloading source repository for $2"
@@ -38,6 +45,19 @@ then
   then
     ( rm "/Users/$(whoami)/Library/Developer/Xcode/UserData/FontAndColorThemes/$2.dvtcolortheme" >/dev/null 2>&1 && echo -e "\033[1;32m$2 color scheme has been removed from your system.\033[22;0m" ) || echo -e "\033[1;31m$2 is not installed\033[22;0m"
     exit
+  fi
+fi
+
+if [[ $1 = "clean" ]]
+then
+  if [ -d "/Library/Caches/Alcatraz" ]
+  then
+    echo -e "\033[1;34m==>\033[22;0m Removing the cache directory"
+    rm -rf /Library/Caches/Alcatraz
+    exit 0
+  else
+    echo -e "\033[1;31m==>\033[22;0m Cache directory is absent"
+    exit 1
   fi
 fi
 
