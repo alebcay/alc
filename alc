@@ -7,6 +7,7 @@ then
     wget -q --tries=10 --timeout=20 --spider http://github.com
     if [[ $? -eq 0 ]]; then
             echo -e "\033[1;34m==>\033[22;0m Retrieving latest package information"
+            mkdir -p /Library/Caches/Alcatraz
             curl -# https://raw.githubusercontent.com/supermarin/alcatraz-packages/master/packages.json > /Library/Caches/Alcatraz/packages.json
             URL=$(jq -r ".packages.plugins | .[] | select(.name==\"$2\") | .url" < /Library/Caches/Alcatraz/packages.json)
     else
